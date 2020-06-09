@@ -10,14 +10,7 @@ const router = express.Router();
 //Add a Post
 router.post(
   '/',
-  [
-    auth,
-    [
-      check('text', 'Caption Text is Required')
-        .not()
-        .isEmpty()
-    ]
-  ],
+  [auth, [check('text', 'Caption Text is Required').not().isEmpty()]],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -31,7 +24,7 @@ router.post(
         text: req.body.text,
         name: user.name,
         avatar: user.avatar,
-        user: req.user.id
+        user: req.user.id,
       });
 
       const post = await newPost.save();
@@ -44,7 +37,7 @@ router.post(
   }
 );
 
-//GET ALL POSTS SOrted by date most recennt first
+//GET ALL POSTS SOrted by date most recent first
 router.get('/', auth, async (req, res) => {
   try {
     const post = await Post.find().sort({ date: -1 });
@@ -115,7 +108,8 @@ router.put('/like/:id', auth, async (req, res) => {
     }
 
     if (
-      post.likes.filter(like => like.user.toString() === req.user.id).length > 0
+      post.likes.filter((like) => like.user.toString() === req.user.id).length >
+      0
     ) {
       return res.status(400).json({ msg: 'Post has already been liked!' });
     }
@@ -144,16 +138,16 @@ router.put('/unlike/:id', auth, async (req, res) => {
     }
 
     if (
-      post.likes.filter(like => like.user.toString() === req.user.id).length ==
-      0
+      post.likes.filter((like) => like.user.toString() === req.user.id)
+        .length == 0
     ) {
       return res.status(400).json({ msg: 'Post has not yet been liked!' });
     }
 
     //index of like to be removed
     const remIndex = post.likes
-      .map(like => like.user.id.toString())
-      .indexOf(req.params.user);
+      .map((like) => like.user.toString())
+      .indexOf(req.user.id);
 
     post.likes.splice(remIndex, 1);
 
@@ -172,14 +166,7 @@ router.put('/unlike/:id', auth, async (req, res) => {
 //Add a Comment on a Post
 router.post(
   '/comment/:id',
-  [
-    auth,
-    [
-      check('text', 'Comment Text is Required')
-        .not()
-        .isEmpty()
-    ]
-  ],
+  [auth, [check('text', 'Comment Text is Required').not().isEmpty()]],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -195,7 +182,7 @@ router.post(
         text: req.body.text,
         name: user.name,
         avatar: user.avatar,
-        user: req.user.id
+        user: req.user.id,
       };
 
       post.comments.unshift(newComment);
@@ -210,27 +197,29 @@ router.post(
   }
 );
 
+//delete a comment on a post
 router.delete('/comment/:post_id/:comment_id', auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.post_id);
 
     //Pull out comment
-    const comment = post.comments.find(
-      comment => comment.id.toString() === req.params.comment_id
+    const comment = post.comments.filter(
+      (comment) => comment._id.toString() === req.params.comment_id
     );
+    // console.log(comment);
 
-    if (!comment) {
+    if (comment.length === 0) {
       return res.status(404).json({ msg: 'Comment not found' });
     }
 
     //Check if user is the one that made the comment
-    if (comment.user.toString() !== req.user.id) {
+    if (comment[0].user.toString() !== req.user.id) {
       return res.status(401).json({ msg: 'User Not Authorized!' });
     }
 
     //index of comment to be removed
     const remIndex = post.comments
-      .map(comment => comment._id.toString())
+      .map((comment) => comment._id.toString())
       .indexOf(req.params.comment_id);
 
     post.comments.splice(remIndex, 1);
