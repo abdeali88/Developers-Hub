@@ -1,7 +1,11 @@
 import React, { Fragment, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { setAlert } from '../../actions/alert';
+import { register } from '../../actions/auth';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
-const Register = () => {
+const Register = (props) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -15,11 +19,15 @@ const Register = () => {
   const onSubmit = (e) => {
     e.preventDefault();
     if (formData.password !== formData.password2) {
-      console.log('Passwords do not match!');
+      props.setAlert('Passwords do not match!', 'danger');
     } else {
-      console.log(formData);
+      props.register(formData);
     }
   };
+
+  if (props.isAuthenticated) {
+    return <Redirect to='/dashboard'></Redirect>;
+  }
 
   return (
     <Fragment>
@@ -35,7 +43,6 @@ const Register = () => {
             name='name'
             value={formData.name}
             onChange={(e) => onChange(e)}
-            required
           />
         </div>
         <div className='form-group'>
@@ -56,7 +63,6 @@ const Register = () => {
             type='password'
             placeholder='Password'
             name='password'
-            minLength='6'
             value={formData.password}
             onChange={(e) => onChange(e)}
           />
@@ -66,7 +72,6 @@ const Register = () => {
             type='password'
             placeholder='Confirm Password'
             name='password2'
-            minLength='6'
             value={formData.password2}
             onChange={(e) => onChange(e)}
           />
@@ -80,4 +85,14 @@ const Register = () => {
   );
 };
 
-export default Register;
+Register.propTypes = {
+  setAlert: PropTypes.func.isRequired,
+  register: PropTypes.func.isRequired,
+  isAuthenticated: PropTypes.bool,
+};
+
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
+
+export default connect(mapStateToProps, { setAlert, register })(Register);
