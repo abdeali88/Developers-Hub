@@ -20,12 +20,12 @@ const Profile = ({
     getProfileById(match.params.user_id);
   }, [getProfileById, match.params.user_id]);
 
-  return loading ? (
+  return profile === null || loading ? (
     <Spinner />
   ) : (
     <Fragment>
       <Link to='/profiles' className='btn btn-light'>
-        Back to Profile
+        Back to Profiles
       </Link>
       {auth.isAuthenticated &&
         auth.loading === false &&

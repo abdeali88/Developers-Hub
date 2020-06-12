@@ -94,6 +94,10 @@ export const logout = () => (dispatch) => {
   });
 
   dispatch({
+    type: 'PROFILE_CLEAR_MY',
+  });
+
+  dispatch({
     type: 'PROFILE_CLEAR',
   });
 };

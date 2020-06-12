@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
-import { createProfile } from '../../actions/profile';
+import { createProfile } from '../../actions/userProfile';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 

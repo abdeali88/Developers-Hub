@@ -1,14 +1,14 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { createProfile, getCurrentProfile } from '../../actions/profile';
+import { createProfile, getMyProfile } from '../../actions/userProfile';
 import PropTypes from 'prop-types';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 //React Route passes history object as prop to each route
 const EditProfile = ({
-  profile: { profile, loading },
+  userProfile: { myProfile, loading },
   createProfile,
-  getCurrentProfile,
+  getMyProfile,
   history,
 }) => {
   const [formData, setFormData] = useState({
@@ -29,23 +29,23 @@ const EditProfile = ({
   const [displaySocialForm, toggleSocialForm] = useState(false);
 
   useEffect(() => {
-    getCurrentProfile();
+    getMyProfile();
     setFormData({
-      company: loading || !profile.company ? '' : profile.company,
-      website: loading || !profile.website ? '' : profile.website,
-      location: loading || !profile.location ? '' : profile.location,
-      bio: loading || !profile.bio ? '' : profile.bio,
-      status: loading || !profile.status ? '' : profile.status,
+      company: loading || !myProfile.company ? '' : myProfile.company,
+      website: loading || !myProfile.website ? '' : myProfile.website,
+      location: loading || !myProfile.location ? '' : myProfile.location,
+      bio: loading || !myProfile.bio ? '' : myProfile.bio,
+      status: loading || !myProfile.status ? '' : myProfile.status,
       githubusername:
-        loading || !profile.githubusername ? '' : profile.githubusername,
-      skills: loading || !profile.skills ? '' : profile.skills,
-      youtube: loading || !profile.social ? '' : profile.social.youtube,
-      facebook: loading || !profile.social ? '' : profile.social.facebook,
-      twitter: loading || !profile.social ? '' : profile.social.twitter,
-      instagram: loading || !profile.social ? '' : profile.social.instagram,
-      linkedin: loading || !profile.social ? '' : profile.social.linkedin,
+        loading || !myProfile.githubusername ? '' : myProfile.githubusername,
+      skills: loading || !myProfile.skills ? '' : myProfile.skills,
+      youtube: loading || !myProfile.social ? '' : myProfile.social.youtube,
+      facebook: loading || !myProfile.social ? '' : myProfile.social.facebook,
+      twitter: loading || !myProfile.social ? '' : myProfile.social.twitter,
+      instagram: loading || !myProfile.social ? '' : myProfile.social.instagram,
+      linkedin: loading || !myProfile.social ? '' : myProfile.social.linkedin,
     });
-  }, [getCurrentProfile]);
+  }, [getMyProfile]);
 
   const {
     company,
@@ -247,14 +247,14 @@ const EditProfile = ({
 
 EditProfile.propTypes = {
   createProfile: PropTypes.func.isRequired,
-  getCurrentProfile: PropTypes.func.isRequired,
-  profile: PropTypes.object.isRequired,
+  getMyProfile: PropTypes.func.isRequired,
+  userProfile: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  profile: state.profile,
+  userProfile: state.userProfile,
 });
 
-export default connect(mapStateToProps, { createProfile, getCurrentProfile })(
-  withRouter(EditProfile)
+export default connect(mapStateToProps, { createProfile, getMyProfile })(
+  EditProfile
 );
