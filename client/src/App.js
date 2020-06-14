@@ -2,7 +2,7 @@ import React, { Fragment, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Navbar from './components/layouts/Navbar';
 import Landing from './components/layouts/Landing';
-import Routes from './routing/Routes';
+import Routes from './components/routing/Routes';
 
 //Every time the App component mounts, it loads user into the state if token is present and valid
 import { loadUser } from './actions/auth';

@@ -1,32 +1,31 @@
 import React, { useEffect, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { getMyProfile } from '../../actions/userProfile';
+import { getCurrentProfile, delAccount } from '../../actions/profile';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import DashboardButtons from './DashboardButtons';
 import Experience from './Experience';
 import Education from './Education';
-import { delAccount } from '../../actions/userProfile';
 
-const Dashboard = ({ getMyProfile, auth, userProfile, delAccount }) => {
+const Dashboard = ({ getCurrentProfile, auth, profile, delAccount }) => {
   useEffect(() => {
-    getMyProfile();
-  }, [getMyProfile]);
+    getCurrentProfile();
+  }, [getCurrentProfile]);
 
   return (
     <Fragment>
       <h1 className='large text-primary'>Dashboard</h1>
       <p className='lead'>
-        <i className='fas fa-user'></i> Welcome {auth.user.name}
+        <i className='fas fa-user'></i> Welcome {auth.user && auth.user.name}
       </p>
 
-      {userProfile.myProfile !== null ? (
+      {profile.profile !== null ? (
         <Fragment>
           <DashboardButtons user_id={auth.user._id} />
-          <Experience experience={userProfile.myProfile.experience} />
-          <Education education={userProfile.myProfile.education} />
+          <Experience experience={profile.profile.experience} />
+          <Education education={profile.profile.education} />
           <div className='my-2'>
-            <button className='btn btn-danger' onClick={delAccount}>
+            <button className='btn btn-danger' onClick={() => delAccount()}>
               <i className='fas fa-user-minus'></i>
               {' Delete My Account'}
             </button>
@@ -45,17 +44,17 @@ const Dashboard = ({ getMyProfile, auth, userProfile, delAccount }) => {
 };
 
 Dashboard.propTypes = {
-  getMyProfile: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
-  userProfile: PropTypes.object.isRequired,
+  getCurrentProfile: PropTypes.func.isRequired,
   delAccount: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  profile: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
-  userProfile: state.userProfile,
+  profile: state.profile,
 });
 
-export default connect(mapStateToProps, { getMyProfile, delAccount })(
+export default connect(mapStateToProps, { getCurrentProfile, delAccount })(
   Dashboard
 );

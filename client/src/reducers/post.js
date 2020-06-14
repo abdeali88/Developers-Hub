@@ -14,8 +14,8 @@ export default function (state = initialState, action) {
       return {
         ...state,
         posts: state.posts.map((post) =>
-          post._id === action.payload.id
-            ? { ...post, likes: action.payload }
+          post._id === action.payload.postId
+            ? { ...post, likes: action.payload.likes }
             : post
         ),
         loading: false,
@@ -28,10 +28,35 @@ export default function (state = initialState, action) {
         loading: false,
       };
 
+    case 'POST_GET':
+      return {
+        ...state,
+        post: action.payload,
+        loading: false,
+      };
+
     case 'POST_DELETE':
       return {
         ...state,
         posts: state.posts.filter((post) => action.payload !== post._id),
+        loading: false,
+      };
+
+    case 'COMMENT_ADD':
+      return {
+        ...state,
+        post: { ...state.post, comments: action.payload },
+        loading: false,
+      };
+    case 'COMMENT_REMOVE':
+      return {
+        ...state,
+        post: {
+          ...state.post,
+          comments: state.post.comments.filter(
+            (comment) => comment._id !== action.payload
+          ),
+        },
         loading: false,
       };
 

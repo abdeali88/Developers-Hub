@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
-import { addEducation } from '../../actions/userProfile';
+import { addEducation } from '../../actions/profile';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -114,7 +114,7 @@ const AddEducation = ({ history, addEducation }) => {
             cols='30'
             rows='5'
             value={description}
-            placeholder='Job Description'
+            placeholder='Course Description'
             onChange={(e) => onChange(e)}
           ></textarea>
         </div>

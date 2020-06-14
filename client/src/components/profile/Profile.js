@@ -10,17 +10,12 @@ import ProfileEducation from './ProfileEducation';
 import GithubRepos from './GithubRepos';
 import { Link } from 'react-router-dom';
 
-const Profile = ({
-  profile: { profile, loading },
-  getProfileById,
-  auth,
-  match,
-}) => {
+const Profile = ({ profile: { profile }, getProfileById, auth, match }) => {
   useEffect(() => {
     getProfileById(match.params.id);
-  }, [getProfileById, match.params.user_id]);
+  }, [getProfileById, match.params.id]);
 
-  return profile === null || loading ? (
+  return profile === null ? (
     <Spinner />
   ) : (
     <Fragment>

@@ -56,15 +56,9 @@ export const register = (formData) => async (dispatch) => {
 export const login = (formData) => async (dispatch) => {
   const { email, password } = formData;
 
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
-
   const body = JSON.stringify({ email, password });
   try {
-    const res = await api.post('/auth', body, config);
+    const res = await api.post('/auth', body);
     dispatch({
       type: 'LOGIN_SUCCESS',
       payload: res.data,
@@ -89,10 +83,6 @@ export const login = (formData) => async (dispatch) => {
 export const logout = () => (dispatch) => {
   dispatch({
     type: 'LOGOUT',
-  });
-
-  dispatch({
-    type: 'PROFILE_CLEAR_MY',
   });
 
   dispatch({

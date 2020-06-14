@@ -8,32 +8,36 @@ const initialState = {
 
 export default function (state = initialState, action) {
   switch (action.type) {
+    case 'PROFILE_CREATE':
     case 'PROFILE_GET_ID':
-      return { ...state, profile: action.payload, error: {}, loading: false };
+    case 'PROFILE_GET':
+    case 'PROFILE_EDUCATION_ADD':
+    case 'PROFILE_EXPERIENCE_ADD':
+    case 'PROFILE_EDUCATION_DELETE':
+    case 'PROFILE_EXPERIENCE_DELETE':
+      return { ...state, profile: action.payload, loading: false };
 
     case 'PROFILE_GET_ALL':
       return {
         ...state,
         profiles: action.payload,
-        error: {},
         loading: false,
       };
 
     case 'PROFILE_GET_REPOS':
-      return { ...state, repos: action.payload, error: {}, loading: false };
+      return { ...state, repos: action.payload, loading: false };
 
-    case 'PROFILE_REPO_CLEAR':
+    case 'NO_REPOS':
       return {
         ...state,
-        profile: null,
         repos: [],
-        loading: false,
       };
 
     case 'PROFILE_ERROR':
       return {
         ...state,
         error: action.payload,
+        profile: null,
         loading: false,
       };
 
@@ -41,9 +45,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         profile: null,
-        profiles: [],
         repos: [],
-        error: {},
         loading: false,
       };
 

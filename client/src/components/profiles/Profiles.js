@@ -19,9 +19,13 @@ const Profiles = ({ profile: { profiles, loading }, getAllProfiles }) => {
         <i className='fab fa-connectdevelop'></i> Browse and connect with
         developers
       </p>
-      {profiles.map((profile) => (
-        <ProfileItem key={profile._id} profile={profile} />
-      ))}
+      {profiles.length > 0 ? (
+        profiles.map((profile) => (
+          <ProfileItem key={profile._id} profile={profile} />
+        ))
+      ) : (
+        <h4>No profiles found...</h4>
+      )}
     </Fragment>
   );
 };

@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Moment from 'react-moment';
-import { delExperience } from '../../actions/userProfile';
+import { delExperience } from '../../actions/profile';
 
 //experience array passed from parent dashboard
 const Experience = ({ experience, delExperience }) => {

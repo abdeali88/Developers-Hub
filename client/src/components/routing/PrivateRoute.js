@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Route, Redirect } from 'react-router-dom';
-import Spinner from '../components/layouts/Spinner';
+import Spinner from '../layouts/Spinner';
 
 const PrivateRoute = ({
   component: Component,

@@ -20,6 +20,7 @@ const store = createStore(
 // initialize current state from redux store for subscription comparison
 // preventing undefined error
 let currentState = store.getState();
+// console.log(currentState);
 
 store.subscribe(() => {
   // keep track of the previous and current state to compare changes
