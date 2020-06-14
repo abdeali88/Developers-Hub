@@ -6,17 +6,7 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 const User = require('../../models/User.js');
 const { check, validationResult } = require('express-validator');
-
-//Get all users
-router.get('/', async (req, res) => {
-  try {
-    const users = await User.find();
-    res.status(401).json(users);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-});
+const normalize = require('normalize-url');
 
 router.post(
   '/',
@@ -48,11 +38,14 @@ router.post(
       }
 
       //getting users avatar
-      const avatar = gravatar.url(email, {
-        s: '200',
-        r: 'pg',
-        d: 'mm',
-      });
+      const avatar = normalize(
+        gravatar.url(email, {
+          s: '200',
+          r: 'pg',
+          d: 'mm',
+        }),
+        { forceHttps: true }
+      );
 
       user = new User({
         name,

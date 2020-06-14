@@ -1,10 +1,14 @@
 import { setAlert } from './alert';
-import axios from 'axios';
+import api from '../utility/api';
 
 //load profile of the user loggedIn
 export const getMyProfile = () => async (dispatch) => {
+  dispatch({
+    type: 'PROFILE_REPO_CLEAR',
+  });
+
   try {
-    const res = await axios.get('/api/profile/me');
+    const res = await api.get('/profile/me');
 
     dispatch({
       type: 'PROFILE_GET_MY',
@@ -33,7 +37,7 @@ export const createProfile = (edit = false, formData, history) => async (
 
   const body = JSON.stringify(formData);
   try {
-    const res = await axios.post('api/profile', body, config);
+    const res = await api.post('/profile', body, config);
     dispatch({
       type: 'PROFILE_CREATE',
       payload: res.data,
@@ -75,7 +79,7 @@ export const addExperience = (formData, history) => async (dispatch) => {
 
   const body = JSON.stringify(formData);
   try {
-    const res = await axios.put('api/profile/experience', body, config);
+    const res = await api.put('/profile/experience', body, config);
     dispatch({
       type: 'PROFILE_EXPERIENCE_ADD',
       payload: res.data,
@@ -113,7 +117,7 @@ export const addEducation = (formData, history) => async (dispatch) => {
 
   const body = JSON.stringify(formData);
   try {
-    const res = await axios.put('api/profile/education', body, config);
+    const res = await api.put('/profile/education', body, config);
     dispatch({
       type: 'PROFILE_EDUCATION_ADD',
       payload: res.data,
@@ -144,7 +148,7 @@ export const addEducation = (formData, history) => async (dispatch) => {
 //DELETE EDUCATION
 export const delEducation = (edu_id) => async (dispatch) => {
   try {
-    const res = await axios.delete(`api/profile/education/${edu_id}`);
+    const res = await api.delete(`/profile/education/${edu_id}`);
     dispatch({
       type: 'PROFILE_EDUCATION_DELETE',
       payload: res.data,
@@ -173,7 +177,7 @@ export const delEducation = (edu_id) => async (dispatch) => {
 //DELETE EXPERIENCE
 export const delExperience = (exp_id) => async (dispatch) => {
   try {
-    const res = await axios.delete(`api/profile/experience/${exp_id}`);
+    const res = await api.delete(`/profile/experience/${exp_id}`);
     dispatch({
       type: 'PROFILE_EXPERIENCE_DELETE',
       payload: res.data,
@@ -203,7 +207,7 @@ export const delExperience = (exp_id) => async (dispatch) => {
 export const delAccount = () => async (dispatch) => {
   if (window.confirm('Are you sure? This cannot be UNDONE!')) {
     try {
-      await axios.delete('api/profile');
+      await api.delete('/profile');
       dispatch({
         type: 'PROFILE_CLEAR_MY',
       });

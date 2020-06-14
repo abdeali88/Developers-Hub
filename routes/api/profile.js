@@ -3,7 +3,9 @@ const router = express.Router();
 const auth = require('../../middleware/auth');
 const { check, validationResult } = require('express-validator');
 const config = require('config');
-const request = require('request');
+const normalize = require('normalize-url');
+const checkObjectId = require('../../middleware/checkObjectId');
+const axios = require('axios');
 
 const User = require('../../models/User');
 const Profile = require('../../models/Profile');
@@ -58,47 +60,37 @@ router.post(
       linkedin,
     } = req.body;
 
-    const profileFields = {};
-    profileFields.user = req.user.id;
-    if (company) profileFields.company = company;
-    if (website) profileFields.website = website;
-    if (location) profileFields.location = location;
-    if (bio) profileFields.bio = bio;
-    if (status) profileFields.status = status;
-    if (githubusername) profileFields.githubusername = githubusername;
+    const profileFields = {
+      user: req.user.id,
+      company,
+      location,
+      website:
+        website && website !== ''
+          ? normalize(website, { forceHttps: true })
+          : '',
+      bio,
+      skills: Array.isArray(skills)
+        ? skills
+        : skills.split(',').map((skill) => ' ' + skill.trim()),
+      status,
+      githubusername,
+    };
 
-    if (skills) {
-      profileFields.skills = skills
-        .split(',')
-        .map((skill) => skill.trim())
-        .toString();
+    // Build social object and add to profileFields
+    const socialfields = { youtube, twitter, instagram, linkedin, facebook };
+    for (const [key, value] of Object.entries(socialfields)) {
+      if (value && value.length > 0)
+        socialfields[key] = normalize(value, { forceHttps: true });
     }
-
-    profileFields.social = {};
-    if (youtube) profileFields.social.youtube = youtube;
-    if (twitter) profileFields.social.twitter = twitter;
-    if (facebook) profileFields.social.facebook = facebook;
-    if (linkedin) profileFields.social.linkedin = linkedin;
-    if (instagram) profileFields.social.instagram = instagram;
+    profileFields.social = socialfields;
 
     try {
-      let profile = await Profile.findOne({ user: req.user.id });
-
-      if (profile) {
-        //Update
-        updatedProfile = await Profile.findOneAndUpdate(
-          { user: req.user.id },
-          { $set: profileFields },
-          { new: true, upsert: true }
-        );
-        // console.log(updatedProfile);
-        return res.json(updatedProfile);
-      }
-
-      //Create Profile
-      profile = new Profile(profileFields);
-      // console.log(profile);
-      await profile.save();
+      // Using upsert option (creates new doc if no match is found):
+      let profile = await Profile.findOneAndUpdate(
+        { user: req.user.id },
+        { $set: profileFields },
+        { new: true, upsert: true }
+      );
       res.json(profile);
     } catch (err) {
       console.error(err.message);
@@ -119,23 +111,24 @@ router.get('/', async (req, res) => {
 });
 
 //Get Profile by user id
-router.get('/user/:user_id', async (req, res) => {
-  try {
-    const profile = await Profile.findOne({
-      user: req.params.user_id,
-    }).populate('user', ['name', 'avatar']);
-    if (!profile) {
-      return res.status(400).json({ msg: 'Profile not found' });
+router.get(
+  '/user/:user_id',
+  checkObjectId('user_id'),
+  async ({ params: { user_id } }, res) => {
+    try {
+      const profile = await Profile.findOne({
+        user: user_id,
+      }).populate('user', ['name', 'avatar']);
+
+      if (!profile) return res.status(400).json({ msg: 'Profile not found' });
+
+      return res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      return res.status(500).json({ msg: 'Server error' });
     }
-    res.json(profile);
-  } catch (err) {
-    console.error(err.msg);
-    if (err.kind == 'ObjectId') {
-      return res.status(400).json({ msg: 'Profile not found' });
-    }
-    return res.status(500).send('Server Error');
   }
-});
+);
 
 //Delete Profile and User
 router.delete('/', auth, async (req, res) => {
@@ -211,18 +204,14 @@ router.put(
 //Delete Profile Experience
 router.delete('/experience/:exp_id', auth, async (req, res) => {
   try {
-    const profile = await Profile.findOne({ user: req.user.id });
-    const expIds = profile.experience.map((exp) => exp._id.toString());
-    // toString because in req.params.exp_id is of string
-    const remIndex = expIds.indexOf(req.params.exp_id);
-    // console.log('remIndex', remIndex);
-    if (remIndex === -1) {
-      return res.status(500).json({ msg: 'Server error' });
-    } else {
-      profile.experience.splice(remIndex, 1);
-      await profile.save();
-      return res.status(200).json(profile);
-    }
+    const foundProfile = await Profile.findOne({ user: req.user.id });
+
+    foundProfile.experience = foundProfile.experience.filter(
+      (exp) => exp._id.toString() !== req.params.exp_id
+    );
+
+    await foundProfile.save();
+    return res.status(200).json(foundProfile);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ msg: 'Server error' });
@@ -285,51 +274,31 @@ router.put(
 //Delete Profile Education
 router.delete('/education/:edu_id', auth, async (req, res) => {
   try {
-    const profile = await Profile.findOne({ user: req.user.id });
-
-    //Get index of education being removed
-    const remIndex = profile.education
-      .map((item) => item._id.toString())
-      .indexOf(req.params.edu_id);
-    if (remIndex === -1) {
-      return res.status(500).json({ msg: 'Server error' });
-    } else {
-      profile.education.splice(remIndex, 1);
-      await profile.save();
-      return res.json(profile);
-    }
-  } catch (err) {
-    console.error(err.message);
-    return res.status(500).send('Server Error');
+    const foundProfile = await Profile.findOne({ user: req.user.id });
+    foundProfile.education = foundProfile.education.filter(
+      (edu) => edu._id.toString() !== req.params.edu_id
+    );
+    await foundProfile.save();
+    return res.status(200).json(foundProfile);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ msg: 'Server error' });
   }
 });
 
 //Get github profile repos
-router.get('/github/:username', (req, res) => {
+router.get('/github/:username', async (req, res) => {
   try {
-    const options = {
-      uri: encodeURI(
-        `https://api.github.com/users/${
-          req.params.username
-        }/repos?per_page=5&sort=created:asc&client_id=${config.get(
-          'githubClientId'
-        )}&client_secret=${config.get('githubSecret')}`
-      ),
-      method: 'GET',
-      headers: { 'user-agent': 'node.js' },
+    const uri = encodeURI(
+      `https://api.github.com/users/${req.params.username}/repos?per_page=5&sort=created:asc`
+    );
+    const headers = {
+      'user-agent': 'node.js',
+      Authorization: `token ${config.get('githubtoken')}`,
     };
 
-    request(options, (error, response, body) => {
-      if (error) {
-        console.error(err.message);
-      }
-
-      if (response.statusCode !== 200) {
-        return res.status(404).json({ msg: 'No github profile found' });
-      }
-
-      res.json(JSON.parse(body));
-    });
+    const gitHubResponse = await axios.get(uri, { headers });
+    return res.json(gitHubResponse.data);
   } catch (err) {
     console.error(err.message);
     return res.send('Server Error');

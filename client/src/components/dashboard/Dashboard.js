@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { getMyProfile } from '../../actions/userProfile';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import Spinner from '../layouts/Spinner';
 import DashboardButtons from './DashboardButtons';
 import Experience from './Experience';
 import Education from './Education';
@@ -14,21 +13,16 @@ const Dashboard = ({ getMyProfile, auth, userProfile, delAccount }) => {
     getMyProfile();
   }, [getMyProfile]);
 
-  return userProfile.loading || auth.loading ? (
-    <Spinner />
-  ) : (
+  return (
     <Fragment>
-      {auth.user && (
-        <Fragment>
-          <h1 className='large text-primary'>Dashboard</h1>
-          <p className='lead'>
-            <i className='fas fa-user'></i> Welcome {auth.user.name}
-          </p>
-        </Fragment>
-      )}
+      <h1 className='large text-primary'>Dashboard</h1>
+      <p className='lead'>
+        <i className='fas fa-user'></i> Welcome {auth.user.name}
+      </p>
+
       {userProfile.myProfile !== null ? (
         <Fragment>
-          <DashboardButtons />
+          <DashboardButtons user_id={auth.user._id} />
           <Experience experience={userProfile.myProfile.experience} />
           <Education education={userProfile.myProfile.education} />
           <div className='my-2'>
@@ -51,6 +45,7 @@ const Dashboard = ({ getMyProfile, auth, userProfile, delAccount }) => {
 };
 
 Dashboard.propTypes = {
+  getMyProfile: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   userProfile: PropTypes.object.isRequired,
   delAccount: PropTypes.func.isRequired,

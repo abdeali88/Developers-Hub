@@ -1,14 +1,12 @@
-import axios from 'axios';
 import { setAlert } from './alert';
-import setAuthToken from '../utility/LoadUser';
+import api from '../utility/api';
+import setAuthToken from '../utility/setAuthToken';
 
 //If the localstorage has a token, user is loaded and authenticated on every app component mounting
 export const loadUser = () => async (dispatch) => {
-  if (localStorage.token) {
-    setAuthToken(localStorage.token);
-  }
   try {
-    const res = await axios.get('/api/auth');
+    setAuthToken(localStorage.token);
+    const res = await api.get('/auth');
 
     dispatch({
       type: 'USER_LOADED',
@@ -33,7 +31,7 @@ export const register = (formData) => async (dispatch) => {
 
   const body = JSON.stringify({ name, email, password });
   try {
-    const res = await axios.post('api/users', body, config);
+    const res = await api.post('/users', body, config);
     dispatch({
       type: 'REGISTER_SUCCESS',
       payload: res.data,
@@ -66,7 +64,7 @@ export const login = (formData) => async (dispatch) => {
 
   const body = JSON.stringify({ email, password });
   try {
-    const res = await axios.post('api/auth', body, config);
+    const res = await api.post('/auth', body, config);
     dispatch({
       type: 'LOGIN_SUCCESS',
       payload: res.data,

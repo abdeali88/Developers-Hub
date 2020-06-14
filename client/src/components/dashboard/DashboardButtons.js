@@ -1,10 +1,13 @@
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 
-const DashboardButtons = () => {
+const DashboardButtons = ({ user_id }) => {
   return (
     <Fragment>
       <div className='dash-buttons'>
+        <Link to={`/profile/${user_id}`} className='btn btn-light'>
+          <i className='fas fa-eye text-primary'></i> View Profile
+        </Link>
         <Link to='/edit-profile' className='btn btn-light'>
           <i className='fas fa-user-circle text-primary'></i> Edit Profile
         </Link>

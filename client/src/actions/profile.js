@@ -1,10 +1,14 @@
 import { setAlert } from './alert';
-import axios from 'axios';
+import api from '../utility/api';
 
 //load the profiles of all users
 export const getAllProfiles = () => async (dispatch) => {
+  dispatch({
+    type: 'PROFILE_REPO_CLEAR',
+  });
+
   try {
-    const res = await axios.get('/api/profile');
+    const res = await api.get('/profile');
 
     dispatch({
       type: 'PROFILE_GET_ALL',
@@ -24,7 +28,7 @@ export const getAllProfiles = () => async (dispatch) => {
 //load the profiles of user by Id
 export const getProfileById = (user_id) => async (dispatch) => {
   try {
-    const res = await axios.get(`/api/profile/user/${user_id}`);
+    const res = await api.get(`/profile/user/${user_id}`);
 
     dispatch({
       type: 'PROFILE_GET_ID',
@@ -44,7 +48,7 @@ export const getProfileById = (user_id) => async (dispatch) => {
 //get github repos of user
 export const getRepos = (githubusername) => async (dispatch) => {
   try {
-    const res = await axios.get(`/api/profile/github/${githubusername}`);
+    const res = await api.get(`/profile/github/${githubusername}`);
 
     dispatch({
       type: 'PROFILE_GET_REPOS',
@@ -52,7 +56,7 @@ export const getRepos = (githubusername) => async (dispatch) => {
     });
   } catch (err) {
     dispatch({
-      type: 'PROFILE_ERROR_REPOS',
+      type: 'PROFILE_ERROR',
       payload: {
         message: err.response.statusText,
         status: err.response.status,

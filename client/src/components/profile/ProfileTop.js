@@ -24,27 +24,27 @@ const ProfileTop = ({
             <i className='fas fa-globe fa-2x'></i>
           </a>
         )}
-        {social.twitter && (
+        {social && (
           <a href={social.twitter} target='_blank' rel='noopener noreferrer'>
             <i className='fab fa-twitter fa-2x'></i>
           </a>
         )}
-        {social.facebook && (
+        {social && (
           <a href={social.facebook} target='_blank' rel='noopener noreferrer'>
             <i className='fab fa-facebook fa-2x'></i>
           </a>
         )}
-        {social.linkedin && (
+        {social && (
           <a href={social.aedin} target='_blank' rel='noopener noreferrer'>
             <i className='fab fa-linkedin fa-2x'></i>
           </a>
         )}
-        {social.youtube && (
+        {social && (
           <a href={social.youtube} target='_blank' rel='noopener noreferrer'>
             <i className='fab fa-youtube fa-2x'></i>
           </a>
         )}
-        {social.instagram && (
+        {social && (
           <a href={social.instagram} target='_blank' rel='noopener noreferrer'>
             <i className='fab fa-instagram fa-2x'></i>
           </a>

@@ -22,10 +22,10 @@ export default function (state = initialState, action) {
     case 'PROFILE_GET_REPOS':
       return { ...state, repos: action.payload, error: {}, loading: false };
 
-    case 'PROFILE_ERROR_REPOS':
+    case 'PROFILE_REPO_CLEAR':
       return {
         ...state,
-        error: action.payload,
+        profile: null,
         repos: [],
         loading: false,
       };
@@ -46,6 +46,7 @@ export default function (state = initialState, action) {
         error: {},
         loading: false,
       };
+
     default:
       return state;
   }
