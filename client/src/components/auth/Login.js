@@ -31,7 +31,7 @@ const Login = (props) => {
       <form className='form' onSubmit={(e) => onSubmit(e)}>
         <div className='form-group'>
           <input
-            type='email'
+            type='text'
             placeholder='Email Address'
             name='email'
             value={formData.email}

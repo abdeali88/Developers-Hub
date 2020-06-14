@@ -52,7 +52,6 @@ const AddEducation = ({ history, addEducation }) => {
             name='school'
             value={school}
             onChange={(e) => onChange(e)}
-            required
           />
         </div>
         <div className='form-group'>
@@ -62,7 +61,6 @@ const AddEducation = ({ history, addEducation }) => {
             name='degree'
             value={degree}
             onChange={(e) => onChange(e)}
-            required
           />
         </div>
         <div className='form-group'>
