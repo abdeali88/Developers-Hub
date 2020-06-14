@@ -20,6 +20,8 @@ export const getCurrentProfile = () => async (dispatch) => {
 
 //load the profiles of all users
 export const getAllProfiles = () => async (dispatch) => {
+  dispatch({ type: 'PROFILE_CLEAR' });
+
   try {
     const res = await api.get('/profile');
 

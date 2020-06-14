@@ -14,11 +14,8 @@ const GithubRepos = ({ username, getRepos, repos }) => {
       <h2 className='text-primary my-1'>
         <i className='fab fa-github'></i> Github Repos
       </h2>
-      {repos.length === 0 ? (
-        <h4 style={{ marginLeft: '10px' }}>No Repositories Found!</h4>
-      ) : (
-        repos.map((repo) => <Repo key={repo.id} repo={repo} />)
-      )}
+      {repos.length !== 0 &&
+        repos.map((repo) => <Repo key={repo.id} repo={repo} />)}
     </div>
   );
 };

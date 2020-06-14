@@ -11,12 +11,8 @@ const Education = ({ education, delEducation }) => {
       <td>{edu.school}</td>
       <td>{edu.degree}</td>
       <td>
-        <Moment format='DD/MM/YYYY'>{edu.from}</Moment> -{' '}
-        {edu.to === null ? (
-          'Now'
-        ) : (
-          <Moment format='DD/MM/YYYY'>{edu.to}</Moment>
-        )}
+        <Moment format='DD/MM/YY'>{edu.from}</Moment> -{' '}
+        {edu.to === null ? 'Now' : <Moment format='DD/MM/YY'>{edu.to}</Moment>}
       </td>
       <td>
         <button
@@ -37,8 +33,8 @@ const Education = ({ education, delEducation }) => {
         <thead>
           <tr>
             <th>School</th>
-            <th className='hide-sm'>Degree</th>
-            <th className='hide-sm'>Years</th>
+            <th>Degree</th>
+            <th>Years</th>
             <th></th>
           </tr>
         </thead>
