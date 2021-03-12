@@ -22,7 +22,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.18",
     "normalize-url": "^5.0.0",
-    "react-dev-utils": "^10.0.0",
+    "react-dev-utils": "^11.0.4",
     "request": "^2.88.2"
   },
   "devDependencies": {
